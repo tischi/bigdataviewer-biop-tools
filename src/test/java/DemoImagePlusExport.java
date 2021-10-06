@@ -1,10 +1,11 @@
 import bdv.util.BdvHandle;
 import bdv.viewer.SourceAndConverter;
 import ch.epfl.biop.bdv.command.exporter.BasicBdvViewToImagePlusExportCommand;
-import ch.epfl.biop.bdv.command.register.Elastix2DAffineRegisterCommand;
+import ij.IJ;
 import mpicbg.spim.data.generic.AbstractSpimData;
 import net.imagej.ImageJ;
 import net.imagej.patcher.LegacyInjector;
+import net.imglib2.realtransform.AffineTransform3D;
 import org.scijava.command.CommandService;
 import sc.fiji.bdvpg.bdv.navigate.ViewerTransformAdjuster;
 import sc.fiji.bdvpg.services.SourceAndConverterServices;
@@ -27,6 +28,19 @@ public class DemoImagePlusExport
 
 
     public static void demo() {
+        BdvHandle bdvHandle = displayImage();
+
+        exportImagePlus( bdvHandle );
+
+        IJ.wait(1000);
+
+        rotate( bdvHandle );
+
+        exportImagePlus( bdvHandle );
+    }
+
+    private static BdvHandle displayImage()
+    {
         final String filePath = "src/test/resources/mri-stack.xml";
         // Import SpimData
         SpimDataFromXmlImporter importer = new SpimDataFromXmlImporter(filePath);
@@ -45,8 +59,20 @@ public class DemoImagePlusExport
         SourceAndConverterServices.getBdvDisplayService().show(bdvHandle, sac);
         new BrightnessAutoAdjuster(sac, 0).run();
         new ViewerTransformAdjuster(bdvHandle, sac).run();
+        return bdvHandle;
+    }
 
-        // Export
+    private static void rotate( BdvHandle bdvHandle )
+    {
+        AffineTransform3D affineTransform3D = new AffineTransform3D();
+        bdvHandle.getViewerPanel().state().getViewerTransform(affineTransform3D);
+        affineTransform3D.rotate( 0, Math.PI / 2 );
+        affineTransform3D.translate( new double[]{0,180,-150} );
+        bdvHandle.getViewerPanel().state().setViewerTransform( affineTransform3D );
+    }
+
+    private static void exportImagePlus( BdvHandle bdvHandle )
+    {
         ij.context()
                 .getService( CommandService.class)
                 .run( BasicBdvViewToImagePlusExportCommand.class, true,
