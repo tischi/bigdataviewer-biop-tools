@@ -6,6 +6,7 @@ import mpicbg.spim.data.generic.AbstractSpimData;
 import net.imagej.ImageJ;
 import net.imagej.patcher.LegacyInjector;
 import net.imglib2.realtransform.AffineTransform3D;
+import net.imglib2.util.LinAlgHelpers;
 import org.scijava.command.CommandService;
 import sc.fiji.bdvpg.bdv.navigate.ViewerTransformAdjuster;
 import sc.fiji.bdvpg.services.SourceAndConverterServices;
@@ -28,14 +29,30 @@ public class DemoImagePlusExport
 
 
     public static void demo() {
+
+        final AffineTransform3D transform3D = new AffineTransform3D();
+        transform3D.set(
+                new double[]{
+                 2.0,  0.0,  0.0, -57.978333333333296,
+                 0.0,  0.0,  1.0, 36.18833333333334,
+                 0.0, -2.0,  0.0, 197.79999999999998} );
+
+        final double[] offset = new double[ 3 ];
+        transform3D.inverse().apply( new double[3], offset );
+
         BdvHandle bdvHandle = displayImage();
 
         exportImagePlus( bdvHandle );
 
+        // needed as otherwise it fetches
+        // already here the rotated image
         IJ.wait(1000);
 
         rotate( bdvHandle );
 
+        // The y and z axis are permuted but otherwise the
+        // coordinate values are correct, i.e. the same
+        // as in BDV
         exportImagePlus( bdvHandle );
     }
 
@@ -79,7 +96,7 @@ public class DemoImagePlusExport
                         "bdv_h", bdvHandle,
                         "capturename", "image",
                         "zsize", 20,
-                        "samplingxyinphysicalunit", 1,
+                        "samplingxyinphysicalunit", 2,
                         "samplingzinphysicalunit", 1,
                         "interpolate", true,
                         "unit", "px",

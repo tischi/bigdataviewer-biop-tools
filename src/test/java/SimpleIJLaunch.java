@@ -1,12 +1,5 @@
-
-import ch.epfl.biop.bdv.bioformats.command.BasicOpenFilesWithBigdataviewerBioformatsBridgeCommand;
-import ij.IJ;
-import loci.common.DebugTools;
 import net.imagej.ImageJ;
 import net.imagej.patcher.LegacyInjector;
-import sc.fiji.bdvpg.scijava.processors.SpimDataPostprocessor;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class SimpleIJLaunch {

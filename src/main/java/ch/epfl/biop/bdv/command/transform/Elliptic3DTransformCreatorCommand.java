@@ -12,9 +12,9 @@ import sc.fiji.bdvpg.scijava.command.BdvPlaygroundActionCommand;
 public class Elliptic3DTransformCreatorCommand implements BdvPlaygroundActionCommand {
 
     @Parameter
-    double radiusX, radiusY, radiusZ, // radii of axes 1 2 3 of ellipse
-            rotationX, rotationY, rotationZ, // 3D rotation euler angles  - maybe not the best parametrization
-            centerX, centerY, centerZ; // ellipse center
+    double r1, r2, r3, // radii of axes 1 2 3 of ellipse
+            rx, ry, rz, // 3D rotation euler angles  - maybe not the best parametrization
+            tx, ty, tz; // ellipse center
 
     @Parameter(type = ItemIO.OUTPUT)
     private Elliptical3DTransform e3Dt;
@@ -26,15 +26,15 @@ public class Elliptic3DTransformCreatorCommand implements BdvPlaygroundActionCom
     public void run() {
         e3Dt = new Elliptical3DTransform();
         e3Dt.setParameters(
-                "radiusX", radiusX,
-                "radiusY", radiusY,
-                "radiusZ", radiusZ,
-                "rotationX", rotationX,
-                "rotationY", rotationY,
-                "rotationZ", rotationZ,
-                "centerX", centerX,
-                "centerY", centerY,
-                "centerZ", centerZ );
+                "r1", r1,
+                "r2", r2,
+                "r3", r3,
+                "rx", rx,
+                "ry", ry,
+                "rz", rz,
+                "tx", tx,
+                "ty", ty,
+                "tz", tz );
 
         cs.run(DisplayEllipseFromTransformCommand.class, false, "rMin", 0.9, "rMax", 1.1, "e3Dt", e3Dt);
     }
